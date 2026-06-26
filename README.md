@@ -1,74 +1,56 @@
-# 🏭 Enterprise Supply Chain Intelligence Platform
+# 🏭 Enterprise Supply Chain Intelligence
 
-## 📌 Project Overview
+## About This Repository
 
-This repository documents my journey of building an end-to-end Supply Chain Analytics Platform using Excel, SQL, Python, and Power BI.
+This repository documents my learning journey in Supply Chain Analytics. I am building one complete project step by step while learning Excel, PostgreSQL, Python, and Power BI.
 
-The goal is to transform raw procurement, inventory, warehouse, and supplier data into actionable business insights for better operational decision-making.
-
-**Current Status:** Phase 1 – Excel Business Logic Development
+Instead of creating many small practice files, my goal is to develop a single end-to-end analytics project that reflects how supply chain data is managed, analyzed, and presented in a business environment.
 
 ---
 
-# 🏗 Project Roadmap
+## Current Progress
 
-## ✅ Phase 1 – Excel Prototype (In Progress)
+**Phase 1 – Excel (In Progress)**
 
-- Inventory Dashboard
-- OTIF Analysis
-- Lead Time Analysis
-- Safety Stock Calculation
-- Reorder Point Calculation
-
----
-
-## ⏳ Phase 2 – PostgreSQL Database
-
-- Database Design
-- Relationships
-- SQL Queries
-- Business Reports
+* Building a realistic supply chain dataset
+* Creating inventory and procurement KPIs
+* Implementing Lead Time, OTIF, Safety Stock, and Reorder Point calculations
+* Designing management dashboards
 
 ---
 
-## ⏳ Phase 3 – Python Automation
+## Upcoming Phases
 
-- Data Cleaning
-- ETL Pipeline
-- Automated Reports
+### Phase 2 – PostgreSQL
 
----
+* Database design
+* SQL queries for business analysis
+* Data modeling
 
-## ⏳ Phase 4 – Power BI Dashboard
+### Phase 3 – Python
 
-- Executive Dashboard
-- Procurement KPIs
-- Inventory KPIs
-- Warehouse KPIs
+* Data cleaning
+* ETL automation
+* KPI generation
 
----
+### Phase 4 – Power BI
 
-# 📊 Business KPIs
-
-- OTIF (On Time In Full)
-- Lead Time
-- Fill Rate
-- Inventory Turnover
-- Safety Stock
-- Reorder Point
-- Supplier Performance
+* Interactive dashboards
+* Executive KPI reporting
+* Business insights
 
 ---
 
-# 🛠 Technology Stack
+## Skills Demonstrated
 
-- Microsoft Excel
-- PostgreSQL
-- Python
-- Power BI
+* Microsoft Excel
+* PostgreSQL
+* Python
+* Power BI
+* Supply Chain Analytics
 
 ---
 
-# Repository Status
+## Project Status
 
-🚧 Currently building Phase 1.
+🚧 This project is actively being developed. New files and features will be added as I progress through each phase of my learning.
