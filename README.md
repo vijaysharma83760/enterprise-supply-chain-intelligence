@@ -109,11 +109,11 @@ enterprise-supply-chain-intelligence
 
 ### Executive Dashboard
 
-![Executive Dashboard](Images/Dashboard_Top.png)
+![Executive Dashboard](Images/Dashboard_Top.png.png)
 
 ### Operational Dashboard
 
-![Operational Dashboard](Images/Dashboard_Bottom.png)
+![Operational Dashboard](Images/Dashboard_Bottom.png.png)
 
 ---
 
