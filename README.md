@@ -2,11 +2,11 @@
 
 ## Overview
 
-This repository contains an end-to-end Supply Chain Analytics project developed using Excel, SQL, Python, and Power BI.
+This repository contains an end-to-end Supply Chain Analytics project built using Microsoft Excel, PostgreSQL, Python, and Power BI.
 
-The objective is to simulate a real-world supply chain environment by analyzing sales, procurement, inventory, and logistics data to generate business insights and management dashboards.
+The project demonstrates how supply chain data can be collected, analyzed, and visualized to support business decision-making across sales, procurement, inventory, suppliers, customers, and logistics.
 
-Instead of creating multiple practice projects, this repository demonstrates a complete analytics workflow built progressively across different technologies.
+Each phase builds upon the previous one to create a complete analytics solution.
 
 ---
 
@@ -14,7 +14,8 @@ Instead of creating multiple practice projects, this repository demonstrates a c
 
 ### Phase 1 – Excel (Completed)
 
-Features:
+#### Features
+
 - Interactive Supply Chain Dashboard
 - KPI Cards
 - Pivot Tables and Pivot Charts
@@ -25,7 +26,8 @@ Features:
 - Business Insights and Recommendations
 - Interactive Slicers
 
-Key KPIs:
+#### Key KPIs
+
 - Total Sales Revenue
 - Total Purchase Cost
 - Inventory Value
@@ -37,7 +39,7 @@ Key KPIs:
 
 ---
 
-### Phase 2 – SQL (Coming Soon)
+### Phase 2 – PostgreSQL (In Progress)
 
 - Database Design
 - Table Relationships
@@ -47,17 +49,17 @@ Key KPIs:
 
 ---
 
-### Phase 3 – Python (Coming Soon)
+### Phase 3 – Python (Planned)
 
 - Data Cleaning
 - ETL Automation
-- KPI Automation
+- KPI Generation
 - Data Validation
 - Business Reporting
 
 ---
 
-### Phase 4 – Power BI (Coming Soon)
+### Phase 4 – Power BI (Planned)
 
 - Executive Dashboard
 - Interactive Reports
@@ -96,7 +98,13 @@ enterprise-supply-chain-intelligence
 
 ## Dashboard Preview
 
-*Add dashboard screenshots here.*
+### Executive Dashboard
+
+![Executive Dashboard](Images/Dashboard_Top.png)
+
+### Operational Dashboard
+
+![Operational Dashboard](Images/Dashboard_Bottom.png)
 
 ---
 
@@ -125,21 +133,17 @@ enterprise-supply-chain-intelligence
 
 ## Project Status
 
-**Completed**
-- Phase 1 – Excel
-
-**In Progress**
-- Phase 2 – SQL
-
-**Planned**
-- Phase 3 – Python
-- Phase 4 – Power BI
+| Phase | Status |
+|--------|--------|
+| Excel Dashboard | Completed |
+| PostgreSQL | In Progress |
+| Python Analytics | Planned |
+| Power BI Dashboard | Planned |
 
 ---
 
 ## Author
 
-**Vijay Sharma** 
+**Vijay Sharma**
 
-Aspiring Data Analyst with an interest in Supply Chain Analytics, Business Intelligence, and Data Visualization.
-
+Aspiring Data Analyst passionate about Supply Chain Analytics, Business Intelligence, Data Visualization, and building end-to-end analytics solutions.
