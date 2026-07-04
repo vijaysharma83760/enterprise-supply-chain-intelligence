@@ -2,11 +2,11 @@
 
 ## Overview
 
-This repository contains an end-to-end Supply Chain Analytics project built using Microsoft Excel, PostgreSQL, Python, and Power BI.
+This repository contains an end-to-end Supply Chain Analytics project developed using Excel, SQL, Python, and Power BI.
 
-The project demonstrates how supply chain data can be collected, analyzed, and visualized to support business decision-making across sales, procurement, inventory, suppliers, customers, and logistics.
+The objective of this project is to simulate a real-world supply chain environment by analyzing sales, procurement, inventory, and logistics data to generate actionable business insights and interactive dashboards.
 
-Each phase builds upon the previous one to create a complete analytics solution.
+Rather than building isolated practice projects, this repository demonstrates a complete analytics workflow across multiple technologies.
 
 ---
 
@@ -16,15 +16,14 @@ Each phase builds upon the previous one to create a complete analytics solution.
 
 #### Features
 
-- Interactive Supply Chain Dashboard
+- Interactive Executive Dashboard
+- Operational Dashboard
 - KPI Cards
-- Pivot Tables and Pivot Charts
-- Sales Analysis
-- Procurement Analysis
-- Inventory Analysis
-- Logistics Analysis
-- Business Insights and Recommendations
+- Pivot Tables
+- Pivot Charts
 - Interactive Slicers
+- Business Insights
+- Recommendations
 
 #### Key KPIs
 
@@ -39,37 +38,47 @@ Each phase builds upon the previous one to create a complete analytics solution.
 
 ---
 
-### Phase 2 – PostgreSQL (In Progress)
+### Phase 2 – SQL (In Progress)
+
+Planned work:
 
 - Database Design
-- Table Relationships
-- SQL Queries
-- Business Analysis
+- Table Creation
+- Data Import
+- Relationships
+- Business SQL Queries
 - KPI Reporting
+- Views
 
 ---
 
 ### Phase 3 – Python (Planned)
 
+Planned work:
+
 - Data Cleaning
 - ETL Automation
-- KPI Generation
 - Data Validation
+- Exploratory Data Analysis
+- KPI Automation
 - Business Reporting
 
 ---
 
 ### Phase 4 – Power BI (Planned)
 
+Planned work:
+
 - Executive Dashboard
+- Operational Dashboard
+- Advanced DAX
 - Interactive Reports
-- Advanced Visualizations
 - Supply Chain KPIs
 - Business Insights
 
 ---
 
-## Tools and Technologies
+## Tools & Technologies
 
 - Microsoft Excel
 - PostgreSQL
@@ -122,23 +131,39 @@ enterprise-supply-chain-intelligence
 ## Skills Demonstrated
 
 - Data Analysis
-- Dashboard Design
+- Dashboard Development
 - Business Intelligence
 - KPI Development
 - Supply Chain Analytics
 - Data Visualization
-- Git and GitHub
+- Microsoft Excel
+- SQL
+- Python
+- Power BI
+- Git
+- GitHub
 
 ---
 
 ## Project Status
 
 | Phase | Status |
-|--------|--------|
-| Excel Dashboard | Completed |
-| PostgreSQL | In Progress |
-| Python Analytics | Planned |
-| Power BI Dashboard | Planned |
+|--------|---------|
+| Excel | Completed |
+| SQL | In Progress |
+| Python | Planned |
+| Power BI | Planned |
+
+---
+
+## Future Enhancements
+
+- Automated ETL Pipeline
+- Advanced SQL Analytics
+- Interactive Power BI Dashboard
+- Demand Forecasting
+- Inventory Optimization
+- Supplier Performance Scorecard
 
 ---
 
@@ -146,4 +171,4 @@ enterprise-supply-chain-intelligence
 
 **Vijay Sharma**
 
-Aspiring Data Analyst passionate about Supply Chain Analytics, Business Intelligence, Data Visualization, and building end-to-end analytics solutions.
+Aspiring Data Analyst with interests in Supply Chain Analytics, Business Intelligence, Data Visualization, SQL, Python, and Power BI.
