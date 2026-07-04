@@ -139,6 +139,7 @@ enterprise-supply-chain-intelligence
 
 ## Author
 
-**Vijay Sharma**
+**Vijay Sharma** 
 
 Aspiring Data Analyst with an interest in Supply Chain Analytics, Business Intelligence, and Data Visualization.
+
