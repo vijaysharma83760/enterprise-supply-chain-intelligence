@@ -58,3 +58,39 @@ FROM purchase_orders po
 JOIN suppliers s
 ON po.supplier_id = s.supplier_id
 ORDER BY po.total_cost DESC;
+
+---------------------------------------------------------
+-- Query 5
+-- Top Products by Procurement Spend
+-- Business Purpose:
+-- Identify products with the highest procurement expenditure.
+---------------------------------------------------------
+
+SELECT
+    pr.product_name,
+    SUM(po.total_cost) AS total_procurement_spend
+FROM products pr
+JOIN purchase_orders po
+ON pr.product_id = po.product_id
+GROUP BY
+    pr.product_name
+ORDER BY
+    total_procurement_spend DESC;
+
+--------------------------------------------------------
+-- Query 6
+-- Procurement Spend by Supplier
+-- Business Purpose:
+-- Identify suppliers receiving the highest procurement spend.
+--------------------------------------------------------
+
+SELECT
+    s.supplier_name,
+    SUM(po.total_cost) AS total_procurement_spend
+FROM suppliers s
+JOIN purchase_orders po
+ON s.supplier_id = po.supplier_id
+GROUP BY
+    s.supplier_name
+ORDER BY
+    total_procurement_spend DESC;
