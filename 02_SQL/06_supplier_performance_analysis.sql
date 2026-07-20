@@ -72,4 +72,96 @@ GROUP BY
 	s.supplier_name
 ORDER BY 
 	average_purchase_order_value DESC;
+--------------------------------------------------------
+-- Query 5
+-- Supplier Order Frequency Ranking
+-- Business Purpose:
+-- Rank suppliers by purchase order frequency to
+-- identify strategic procurement partners.
+--------------------------------------------------------
 
+SELECT
+	s.supplier_name,
+	COUNT(*) AS total_purchase_orders
+FROM suppliers s
+JOIN purchase_orders po
+ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+ORDER BY
+	total_purchase_orders DESC;
+
+--------------------------------------------------------
+-- Query 6
+-- Top 5 Suppliers by Procurement Spend
+-- Business Purpose:
+-- Identify the top five suppliers receiving the highest
+-- procurement spend for strategic sourcing analysis.
+--------------------------------------------------------
+
+SELECT
+	s.supplier_name,
+	SUM(po.total_cost) AS total_procurement_spend
+FROM suppliers s
+JOIN purchase_orders po
+ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+ORDER BY
+	total_procurement_spend DESC
+LIMIT 5;
+
+--------------------------------------------------------
+-- Query 7
+-- High-Value Suppliers
+-- Business Purpose:
+-- Display suppliers whose total procurement spend
+-- exceeds ₹100,000 for procurement analysis.
+--------------------------------------------------------
+
+SELECT
+	s.supplier_name,
+	SUM(po.total_cost) AS total_procurement_spend
+FROM suppliers s
+JOIN purchase_orders po
+ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+HAVING
+	SUM(po.total_cost) > 100000
+ORDER BY
+	total_procurement_spend DESC;
+
+--------------------------------------------------------
+-- Query 8
+-- Supplier Performance Summary
+-- Business Purpose:
+-- Generate a supplier performance report showing
+-- purchase order count, total procurement spend,
+-- and average purchase order value.
+--------------------------------------------------------
+
+SELECT
+	s.supplier_name,
+	COUNT(*) AS total_orders,
+	SUM(po.total_cost) AS total_spend,
+	ROUND(AVG(po.total_cost), 2) AS average_order_value
+FROM suppliers s
+JOIN purchase_orders po
+ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+ORDER BY
+	total_spend DESC;
+
+--------------------------------------------------------
+-- Query 9
+-- Overall Average Purchase Order Value
+-- Business Purpose:
+-- Calculate the average purchase order value across
+-- all purchase orders for benchmarking purposes.
+--------------------------------------------------------
+
+SELECT
+	AVG(total_cost) AS overall_average_purchase_order_value
+FROM purchase_orders;
