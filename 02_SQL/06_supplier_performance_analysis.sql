@@ -165,3 +165,82 @@ ORDER BY
 SELECT
 	AVG(total_cost) AS overall_average_purchase_order_value
 FROM purchase_orders;
+
+--------------------------------------------------------
+-- Query 10
+-- Purchase Orders Above Company Average Value
+-- Business Purpose:
+-- Identify purchase orders whose total cost is higher
+-- than the overall average purchase order value.
+-- Helps procurement managers detect high-value
+-- purchase orders for approval and analysis.
+--------------------------------------------------------
+
+SELECT
+	product_id,
+	total_cost
+FROM purchase_orders
+WHERE total_cost >
+(
+	SELECT
+		ROUND(AVG(total_cost), 2)
+	FROM purchase_orders
+)
+ORDER BY
+	total_cost DESC;
+
+--------------------------------------------------------
+-- Query 11
+-- Total Procurement Spend by Supplier
+-- Business Purpose:
+-- Calculate the total procurement spend for each
+-- supplier to identify strategic suppliers and
+-- measure supplier contribution to overall procurement.
+--------------------------------------------------------
+
+SELECT
+	s.supplier_name,
+	SUM(po.total_cost) AS total_suppliers_spend
+FROM suppliers s
+INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+ORDER BY
+	total_suppliers_spend DESC;
+
+--------------------------------------------------------
+-- Query 12
+-- Suppliers with Above-Average Procurement Spend
+-- Business Purpose:
+-- Identify suppliers whose total procurement spend
+-- is greater than the average procurement spend of
+-- all suppliers. Useful for strategic sourcing and
+-- supplier performance evaluation.
+--------------------------------------------------------
+
+SELECT
+	s.supplier_name,
+	SUM(po.total_cost) AS total_suppliers_spend
+FROM suppliers s
+INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+GROUP BY
+	s.supplier_name
+HAVING
+	SUM(po.total_cost) >
+(
+	SELECT
+		AVG(total_supplier_spend)
+	FROM
+	(
+		SELECT
+			supplier_id,
+			SUM(total_cost) AS total_supplier_spend
+		FROM purchase_orders
+		GROUP BY
+			supplier_id
+	) AS supplier_spend
+)
+ORDER BY
+	total_suppliers_spend DESC;
