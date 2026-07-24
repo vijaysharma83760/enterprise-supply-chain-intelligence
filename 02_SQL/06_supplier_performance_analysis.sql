@@ -244,3 +244,58 @@ HAVING
 )
 ORDER BY
 	total_suppliers_spend DESC;
+
+--------------------------------------------------------
+-- Query 13
+-- Purchase Orders Above Supplier Average Value
+-- Business Purpose:
+-- Identify purchase orders whose total cost is greater
+-- than the average purchase order value for the same
+-- supplier. Helps detect unusually large purchase
+-- orders relative to each supplier's normal pattern.
+--------------------------------------------------------
+
+SELECT
+    po.purchase_order_id,
+    s.supplier_name,
+    po.total_cost
+FROM purchase_orders po
+INNER JOIN suppliers s
+    ON po.supplier_id = s.supplier_id
+WHERE po.total_cost >
+(
+    SELECT
+        AVG(po2.total_cost)
+    FROM purchase_orders po2
+    WHERE po2.supplier_id = po.supplier_id
+)
+ORDER BY
+    po.total_cost DESC;
+
+--------------------------------------------------------
+-- Query 14
+-- Products Above Category Average Cost
+-- Business Purpose:
+-- Identify products whose unit cost is greater than
+-- the average unit cost of products in the same
+-- category.
+--------------------------------------------------------
+
+SELECT
+    p1.product_id,
+    p1.product_name,
+    p1.category,
+    p1.unit_cost
+FROM products p1
+WHERE p1.unit_cost >
+(
+    SELECT
+        AVG(p2.unit_cost)
+    FROM products p2
+    WHERE p2.category = p1.category
+)
+ORDER BY
+    p1.unit_cost DESC;
+
+
+
