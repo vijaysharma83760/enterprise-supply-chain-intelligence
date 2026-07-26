@@ -297,5 +297,79 @@ WHERE p1.unit_cost >
 ORDER BY
     p1.unit_cost DESC;
 
+--------------------------------------------------------
+-- Query 15
+-- Suppliers with At Least One Purchase Order (EXISTS)
+-- Business Purpose:
+-- Identify active suppliers who have received at least
+-- one purchase order.
+--------------------------------------------------------
 
+SELECT
+    s.supplier_id,
+    s.supplier_name
+FROM suppliers s
+WHERE EXISTS
+(
+    SELECT 1
+    FROM purchase_orders po
+    WHERE po.supplier_id = s.supplier_id
+);
 
+--------------------------------------------------------
+-- Query 16
+-- Suppliers with No Purchase Orders (NOT EXISTS)
+-- Business Purpose:
+-- Identify inactive suppliers who have never received
+-- a purchase order. Useful for supplier master cleanup
+-- and procurement optimization.
+--------------------------------------------------------
+
+SELECT 
+	s.supplier_id,
+	s.supplier_name
+FROM suppliers s
+WHERE NOT EXISTS
+(	
+	SELECT 1
+	FROM purchase_orders po
+	WHERE s.supplier_id = po.supplier_id
+);
+
+--------------------------------------------------------
+-- Query 17
+-- Purchase Orders Greater Than ANY Purchase Order
+-- Business Purpose:
+-- Identify purchase orders whose total cost is greater
+-- than at least one purchase order from Supplier S001.
+--------------------------------------------------------
+
+SELECT 
+	po1.purchase_order_id,
+	po1.total_cost
+FROM purchase_orders po1
+WHERE po1.total_cost > ANY 
+(
+	SELECT po2.total_cost
+	FROM purchase_orders po2
+	WHERE po2.supplier_id = 'S001'
+);
+
+--------------------------------------------------------
+-- Query 18
+-- Purchase Orders Greater Than ALL Purchase Orders
+-- Business Purpose:
+-- Identify purchase orders whose total cost is greater
+-- than every purchase order from Supplier S001.
+--------------------------------------------------------
+
+SELECT 
+	po1.purchase_order_id,
+	po1.total_cost
+FROM purchase_orders po1
+WHERE po1.total_cost > ALL 
+(
+	SELECT po2.total_cost
+	FROM purchase_orders po2
+	WHERE po2.supplier_id = 'S001'
+);
