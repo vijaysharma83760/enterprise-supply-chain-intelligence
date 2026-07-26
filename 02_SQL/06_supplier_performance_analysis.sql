@@ -373,3 +373,177 @@ WHERE po1.total_cost > ALL
 	FROM purchase_orders po2
 	WHERE po2.supplier_id = 'S001'
 );
+
+--------------------------------------------------------
+-- Query 15
+-- Suppliers with At Least One Purchase Order (EXISTS)
+-- Business Purpose:
+-- Identify active suppliers who have received at least
+-- one purchase order.
+--------------------------------------------------------
+
+SELECT
+    s.supplier_id,
+    s.supplier_name
+FROM suppliers s
+WHERE EXISTS
+(
+    SELECT 1
+    FROM purchase_orders po
+    WHERE po.supplier_id = s.supplier_id
+);
+
+--------------------------------------------------------
+-- Query 16
+-- Suppliers with No Purchase Orders (NOT EXISTS)
+-- Business Purpose:
+-- Identify inactive suppliers who have never received
+-- a purchase order. Useful for supplier master cleanup
+-- and procurement optimization.
+--------------------------------------------------------
+
+SELECT 
+	s.supplier_id,
+	s.supplier_name
+FROM suppliers s
+WHERE NOT EXISTS
+(	
+	SELECT 1
+	FROM purchase_orders po
+	WHERE s.supplier_id = po.supplier_id
+);
+
+--------------------------------------------------------
+-- Query 17
+-- Purchase Orders Greater Than ANY Purchase Order
+-- Business Purpose:
+-- Identify purchase orders whose total cost is greater
+-- than at least one purchase order from Supplier S001.
+--------------------------------------------------------
+
+SELECT 
+	po1.purchase_order_id,
+	po1.total_cost
+FROM purchase_orders po1
+WHERE po1.total_cost > ANY 
+(
+	SELECT po2.total_cost
+	FROM purchase_orders po2
+	WHERE po2.supplier_id = 'S001'
+);
+
+--------------------------------------------------------
+-- Query 18
+-- Purchase Orders Greater Than ALL Purchase Orders
+-- Business Purpose:
+-- Identify purchase orders whose total cost is greater
+-- than every purchase order from Supplier S001.
+--------------------------------------------------------
+
+SELECT 
+	po1.purchase_order_id,
+	po1.total_cost
+FROM purchase_orders po1
+WHERE po1.total_cost > ALL 
+(
+	SELECT po2.total_cost
+	FROM purchase_orders po2
+	WHERE po2.supplier_id = 'S001'
+);
+
+--------------------------------------------------------
+-- Query 19
+-- Supplier Procurement Spend Using CTE
+-- Business Purpose:
+-- Create a reusable temporary result set containing
+-- total procurement spend for each supplier using a
+-- Common Table Expression (CTE).
+--------------------------------------------------------
+
+WITH suppliers_spend 
+AS (SELECT 
+		s.supplier_name,
+		SUM(po.total_cost) AS total_supplier_spend
+	FROM purchase_orders po
+	INNER JOIN suppliers s
+	ON po.supplier_id = s.supplier_id
+	GROUP BY s.supplier_name
+)
+
+SELECT * FROM suppliers_spend;
+
+--------------------------------------------------------
+-- Query 20
+-- Suppliers with Procurement Spend Greater Than ₹500,000 Using CTE
+-- Business Purpose:
+-- Identify suppliers whose total procurement spend
+-- exceeds ₹500,000 by using a Common Table Expression
+-- (CTE). Useful for identifying high-value suppliers
+-- for procurement planning and strategic sourcing.
+--------------------------------------------------------
+
+WITH supplier_spend 
+AS (SELECT 
+		s.supplier_name,
+		SUM(po.total_cost) AS total_supplier_spend
+	FROM purchase_orders po
+	INNER JOIN suppliers s
+	ON po.supplier_id = s.supplier_id
+	GROUP BY s.supplier_name
+)
+
+SELECT 
+	* 
+FROM supplier_spend
+WHERE total_supplier_spend > 500000;
+
+--------------------------------------------------------
+-- Query 21
+-- Top 5 Suppliers by Procurement Spend Using CTE
+-- Business Purpose:
+-- Identify the top five suppliers based on total
+-- procurement spend to support supplier evaluation
+-- and strategic sourcing decisions.
+--------------------------------------------------------
+
+WITH suppliers_spend 
+AS (SELECT 
+		s.supplier_name,
+		SUM(po.total_cost) AS total_supplier_spend
+	FROM purchase_orders po
+	INNER JOIN suppliers s
+	ON po.supplier_id = s.supplier_id
+	GROUP BY s.supplier_name
+)
+
+SELECT * FROM suppliers_spend
+ORDER BY total_supplier_spend DESC 
+LIMIT 5;
+
+--------------------------------------------------------
+-- Query 22
+-- Supplier Spend Report Using CTE and JOIN
+-- Business Purpose:
+-- Create a supplier procurement report by calculating
+-- total procurement spend for each supplier using a
+-- Common Table Expression (CTE) and joining it with
+-- the supplier master data to display supplier details.
+--------------------------------------------------------
+
+WITH supplier_spend AS 
+(
+	SELECT 
+		supplier_id,
+		SUM(total_cost) AS total_supplier_spend
+	FROM purchase_orders
+	GROUP BY supplier_id
+)
+
+SELECT 
+	s.supplier_name,
+	s.country,
+	ss.total_supplier_spend
+FROM supplier_spend ss
+INNER JOIN suppliers s
+	ON ss.supplier_id = s.supplier_id
+ORDER BY ss.total_supplier_spend DESC;
