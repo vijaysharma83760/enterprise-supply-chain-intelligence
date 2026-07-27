@@ -547,3 +547,114 @@ FROM supplier_spend ss
 INNER JOIN suppliers s
 	ON ss.supplier_id = s.supplier_id
 ORDER BY ss.total_supplier_spend DESC;
+
+--------------------------------------------------------
+-- Query 23
+-- Rank Suppliers by Procurement Spend Using ROW_NUMBER()
+-- Business Purpose:
+-- Assign a unique sequential rank to suppliers based
+-- on total procurement spend, helping procurement
+-- managers identify the highest-spending suppliers.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	 s.supplier_name,
+	 SUM(po.total_cost) AS total_suppliers_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+	GROUP BY supplier_name
+)
+
+SELECT 
+	supplier_name,
+    total_suppliers_spend,
+    ROW_NUMBER() OVER (ORDER BY total_suppliers_spend DESC) AS supplier_rank
+FROM total_spend
+ORDER BY supplier_rank;
+
+--------------------------------------------------------
+-- Query 24
+-- Rank Suppliers by Procurement Spend Using RANK()
+-- Business Purpose:
+-- Assign ranks to suppliers based on total procurement
+-- spend. Suppliers with the same procurement spend
+-- receive the same rank, and the next rank is skipped.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	 s.supplier_name,
+	 SUM(po.total_cost) AS total_suppliers_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+	GROUP BY supplier_name
+)
+
+SELECT 
+	supplier_name,
+    total_suppliers_spend,
+    RANK() OVER (ORDER BY total_suppliers_spend DESC) AS supplier_rank
+FROM total_spend
+ORDER BY supplier_rank;
+
+--------------------------------------------------------
+-- Query 25
+-- Rank Suppliers by Procurement Spend Using DENSE_RANK()
+-- Business Purpose:
+-- Assign dense ranks to suppliers based on total
+-- procurement spend. Suppliers with the same spend
+-- receive the same rank, and the next rank is not skipped.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	 s.supplier_name,
+	 SUM(po.total_cost) AS total_suppliers_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+	GROUP BY supplier_name
+)
+
+SELECT 
+	supplier_name,
+    total_suppliers_spend,
+    DENSE_RANK() OVER (ORDER BY total_suppliers_spend DESC) AS supplier_rank
+FROM total_spend
+ORDER BY supplier_rank;
+
+--------------------------------------------------------
+-- Query 26
+-- Rank Suppliers Within Each City Using ROW_NUMBER()
+-- Business Purpose:
+-- Rank suppliers by procurement spend within each city.
+-- The ranking restarts for every city using PARTITION BY,
+-- allowing regional performance comparisons.
+--------------------------------------------------------
+
+WITH suppliers_detail AS 
+(
+	SELECT 
+	s.supplier_name,
+	s.city,
+	SUM(po.total_cost) AS total_suppliers_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+	ON s.supplier_id = po.supplier_id
+	GROUP BY s.supplier_name, s.city
+)
+
+SELECT 
+	supplier_name,
+	city,
+	total_suppliers_spend,
+	ROW_NUMBER() OVER (PARTITION BY city
+	ORDER BY total_suppliers_spend DESC) AS supplier_rank
+FROM suppliers_detail
+ORDER BY city, supplier_rank;
