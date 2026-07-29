@@ -658,3 +658,111 @@ SELECT
 	ORDER BY total_suppliers_spend DESC) AS supplier_rank
 FROM suppliers_detail
 ORDER BY city, supplier_rank;
+
+--------------------------------------------------------
+-- Query 27
+-- Running Total of Supplier Procurement Spend
+-- Business Purpose:
+-- Calculate the cumulative procurement spend across
+-- suppliers ordered by total procurement spend.
+-- Useful for Pareto analysis and executive reporting.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	s.supplier_name,
+	SUM(po.total_cost) AS total_supplier_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+		ON s.supplier_id = po.supplier_id
+	GROUP BY s.supplier_name
+)
+
+SELECT
+    supplier_name,
+    total_supplier_spend,
+    SUM(total_supplier_spend) OVER( 
+		ORDER BY total_supplier_spend DESC
+		) AS running_total
+FROM total_spend;
+
+--------------------------------------------------------
+-- Query 28
+-- Running Average of Supplier Procurement Spend
+-- Business Purpose:
+-- Calculate the cumulative average procurement spend
+-- across suppliers ordered by total procurement spend.
+-- Useful for procurement trend analysis, supplier
+-- performance monitoring, and executive reporting.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	s.supplier_name,
+	SUM(po.total_cost) AS total_supplier_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+		ON s.supplier_id = po.supplier_id
+	GROUP BY s.supplier_name
+)
+
+SELECT
+    supplier_name,
+    total_supplier_spend,
+    ROUND(AVG(total_supplier_spend) OVER( 
+		ORDER BY total_supplier_spend DESC
+		),2) AS running_average
+FROM total_spend;
+
+--------------------------------------------------------
+-- Query 29
+-- Compare Supplier Spend with Previous Supplier Using LAG()
+-- Business Purpose:
+-- Retrieve the previous supplier's procurement spend
+-- to compare supplier performance and identify trends.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	s.supplier_name,
+	SUM(po.total_cost) AS total_supplier_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+		ON s.supplier_id = po.supplier_id
+	GROUP BY s.supplier_name
+)
+SELECT 
+	supplier_name,
+	total_supplier_spend,
+	LAG(total_supplier_spend) OVER(
+		ORDER BY total_supplier_spend DESC) AS previous_supplier_spend
+	FROM total_spend;
+
+--------------------------------------------------------
+-- Query 30
+-- Compare Supplier Spend with Next Supplier Using LEAD()
+-- Business Purpose:
+-- Retrieve the next supplier's procurement spend to
+-- compare supplier rankings and analyze procurement
+-- spend differences between consecutive suppliers.
+--------------------------------------------------------
+
+WITH total_spend AS 
+(
+	SELECT 
+	s.supplier_name,
+	SUM(po.total_cost) AS total_supplier_spend
+	FROM suppliers s
+	INNER JOIN purchase_orders po
+		ON s.supplier_id = po.supplier_id
+	GROUP BY s.supplier_name
+)
+SELECT 
+	supplier_name,
+	total_supplier_spend,
+	LEAD (total_supplier_spend) OVER(
+		ORDER BY total_supplier_spend DESC) AS next_supplier_spend
+	FROM total_spend;
