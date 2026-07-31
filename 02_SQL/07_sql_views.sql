@@ -171,4 +171,187 @@ SELECT
 FROM vw_supplier_procurement_summary
 WHERE average_purchase_order_value > 100000
 ORDER BY average_purchase_order_value DESC;
-	
+
+/*
+===========================================================
+Enterprise Supply Chain Intelligence
+Phase 2 - SQL Views
+
+Author      : Vijay Sharma
+Database    : SupplyChainDB
+
+View 2      : Inventory Summary View
+
+Description:
+This view provides a consolidated inventory summary by
+combining product master data with inventory records.
+It enables inventory monitoring, stock valuation, and
+reorder analysis through a reusable business dataset.
+
+Business Use Cases:
+- Monitor current inventory levels
+- Analyze inventory value by product
+- Support reorder planning
+- Track safety stock compliance
+- Build inventory management dashboards
+===========================================================
+*/
+
+CREATE VIEW vw_inventory_summary AS 
+SELECT 
+	p.product_id,
+	P.product_name,
+	p.category,
+	in_.current_stock,
+	p.reorder_point,
+	p.safety_stock,
+	p.unit_cost,
+	in_.inventory_value
+FROM products p
+INNER JOIN inventory in_
+ON p.product_id = in_.product_id
+ORDER BY p.product_id;
+
+--------------------------------------------------------
+-- Query 39
+-- View Complete Inventory Summary
+-- Business Purpose:
+-- Display complete inventory information using the
+-- inventory summary view for daily monitoring and
+-- operational reporting.
+--------------------------------------------------------
+
+SELECT 
+	* 
+FROM vw_inventory_summary;
+
+--------------------------------------------------------
+-- Query 40
+-- High-Value Inventory Items
+-- Business Purpose:
+-- Identify products with high inventory value to
+-- support inventory investment analysis and working
+-- capital management.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	inventory_value
+FROM vw_inventory_summary
+WHERE inventory_value > 500000
+ORDER BY inventory_value DESC;
+
+--------------------------------------------------------
+-- Query 41
+-- Products Requiring Reorder
+-- Business Purpose:
+-- Identify products whose current stock has fallen
+-- below the predefined reorder point. This report
+-- helps inventory planners prioritize replenishment,
+-- prevent stock shortages, and maintain optimal
+-- inventory levels.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	reorder_point
+FROM vw_inventory_summary
+WHERE current_stock < reorder_point
+ORDER BY current_stock ASC;
+
+--------------------------------------------------------
+-- Query 42
+-- Overstocked Products
+-- Business Purpose:
+-- Identify products whose current stock exceeds the
+-- defined safety stock level. This report helps
+-- inventory managers monitor excess inventory,
+-- optimize warehouse utilization, and reduce
+-- inventory carrying costs.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	safety_stock
+FROM vw_inventory_summary
+WHERE current_stock > safety_stock
+ORDER BY current_stock DESC;
+
+--------------------------------------------------------
+-- Query 43
+-- Inventory Status Classification
+-- Business Purpose:
+-- Classify each product based on its current stock
+-- relative to the reorder point. This report helps
+-- inventory managers quickly identify products that
+-- require replenishment, are optimally stocked, or
+-- have excess inventory.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	reorder_point,
+CASE
+	WHEN current_stock < reorder_point THEN 'Reorder'
+	WHEN current_stock > reorder_point THEN 'Overstocked'
+	ELSE 'Optimal'
+	END AS current_status
+FROM vw_inventory_summary
+ORDER BY current_stock ASC;
+
+--------------------------------------------------------
+-- Query 44
+-- Inventory Status Summary
+-- Business Purpose:
+-- Summarize the number of products in each inventory
+-- status category. This report helps inventory
+-- managers monitor stock health and supports
+-- inventory planning decisions.
+--------------------------------------------------------
+
+SELECT
+    CASE
+        WHEN current_stock < reorder_point THEN 'Reorder'
+        WHEN current_stock > reorder_point THEN 'Overstocked'
+        ELSE 'Optimal'
+    END AS current_status,
+    COUNT(*) AS total_products
+FROM vw_inventory_summary
+GROUP BY
+    CASE
+        WHEN current_stock < reorder_point THEN 'Reorder'
+        WHEN current_stock > reorder_point THEN 'Overstocked'
+        ELSE 'Optimal'
+    END
+ORDER BY total_products DESC;
+
+--------------------------------------------------------
+-- Query 45
+-- Top 10 Products by Inventory Value
+-- Business Purpose:
+-- Identify the top 10 products with the highest
+-- inventory value. This report helps management
+-- prioritize inventory investment, optimize working
+-- capital allocation, and focus on high-value
+-- inventory items.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	inventory_value
+FROM vw_inventory_summary
+ORDER BY inventory_value DESC
+LIMIT 10;
