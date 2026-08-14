@@ -355,3 +355,83 @@ SELECT
 FROM vw_inventory_summary
 ORDER BY inventory_value DESC
 LIMIT 10;
+
+--------------------------------------------------------
+-- Query 46
+-- Identify Products Below Safety Stock
+-- Business Purpose:
+-- Identify products whose current stock has fallen
+-- below the defined safety stock level. This helps
+-- warehouse and procurement teams identify inventory
+-- risk and prioritize replenishment activities.
+--------------------------------------------------------
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	safety_stock
+FROM vw_inventory_summary
+WHERE current_stock < safety_stock
+ORDER BY current_stock ASC;
+
+--------------------------------------------------------
+-- Query 47
+-- Identify Products Above Reorder Point
+-- Business Purpose:
+-- Identify products whose current stock is above the
+-- defined reorder point. This helps warehouse managers
+-- monitor inventory availability and prioritize products
+-- with higher stock levels for inventory planning.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	reorder_point
+FROM vw_inventory_summary
+WHERE current_stock > reorder_point
+ORDER BY current_stock DESC;
+
+--------------------------------------------------------
+-- Query 48
+-- Identify Products at or Below Reorder Point
+-- Business Purpose:
+-- Identify products whose current stock has reached or
+-- fallen below the defined reorder point. This helps
+-- procurement and warehouse teams identify products
+-- that may require replenishment.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	reorder_point
+FROM vw_inventory_summary
+WHERE current_stock <= reorder_point
+ORDER BY current_stock ASC;
+
+--------------------------------------------------------
+-- Query 49
+-- Identify Products with the Largest Replenishment Gap
+-- Business Purpose:
+-- Identify products whose current stock is below the
+-- defined reorder point and calculate the inventory gap.
+-- This helps procurement and warehouse teams prioritize
+-- replenishment for products with the largest shortages.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+	product_name,
+	category,
+	current_stock,
+	reorder_point,
+	reorder_point - current_stock AS reorder_gap 
+FROM vw_inventory_summary
+WHERE current_stock < reorder_point
+ORDER BY reorder_gap DESC;
