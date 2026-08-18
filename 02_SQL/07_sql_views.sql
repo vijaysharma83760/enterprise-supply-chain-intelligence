@@ -435,3 +435,277 @@ SELECT
 FROM vw_inventory_summary
 WHERE current_stock < reorder_point
 ORDER BY reorder_gap DESC;
+
+--------------------------------------------------------
+-- Query 50
+-- Classify Inventory by Stock Status
+-- Business Purpose:
+-- Classify products based on their current stock level
+-- compared with the reorder point and safety stock.
+-- This helps warehouse and procurement teams quickly
+-- identify products requiring replenishment, products
+-- with low inventory buffers, and products with adequate
+-- stock levels.
+--------------------------------------------------------
+
+SELECT 
+    product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+    CASE
+        WHEN current_stock < reorder_point THEN 'Reorder'
+        WHEN current_stock >= reorder_point 
+             AND current_stock < safety_stock THEN 'Low Buffer'
+        ELSE 'Adequate'
+    END AS inventory_status
+FROM vw_inventory_summary
+ORDER BY current_stock ASC;
+
+--------------------------------------------------------
+-- Query 51
+-- Identify Products with High Inventory Value at Risk
+--
+-- Business Purpose:
+-- Identify products whose current stock is below the
+-- defined reorder point and calculate the current
+-- inventory value at risk. This helps procurement and
+-- warehouse teams prioritize replenishment for products
+-- with higher financial exposure.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	current_stock * unit_cost AS inventory_value_at_risk
+FROM vw_inventory_summary
+WHERE current_stock < reorder_point
+ORDER BY inventory_value_at_risk DESC;
+
+--------------------------------------------------------
+-- Query 52
+-- Calculate Inventory Coverage Ratio
+--
+-- Business Purpose:
+-- Calculate the inventory coverage ratio for each
+-- product by comparing its current inventory level
+-- with the defined reorder point. This helps inventory
+-- planners identify products with relatively low
+-- inventory coverage and prioritize inventory review.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 53
+-- Identify Products with Low Inventory Coverage
+--
+-- Business Purpose:
+-- Identify products whose inventory coverage ratio is
+-- below 1. This helps inventory and procurement teams
+-- identify products whose current inventory level is
+-- below the defined reorder-point level and prioritize
+-- them for further inventory review.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+WHERE (current_stock * unit_cost) / (reorder_point * unit_cost) < 1
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 54
+-- Classify Products by Inventory Coverage Risk
+--
+-- Business Purpose:
+-- Classify products based on their inventory coverage
+-- ratio to identify critical, high-risk, moderate-risk,
+-- and adequate inventory positions. This helps inventory
+-- and procurement teams prioritize products requiring
+-- closer monitoring and replenishment attention.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio,
+	CASE
+	WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) < .50 THEN 'Critical'
+	WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >=0.50 
+		AND (current_stock * unit_cost) / (reorder_point * unit_cost) <0.75 THEN 'High Risk'
+	WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >=.75 
+		AND (current_stock * unit_cost) / (reorder_point * unit_cost) <1.00 THEN 'Moderate Risk'
+	ELSE 'Adequate'
+	END AS inventory_coverage_ratio_status
+FROM vw_inventory_summary
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 55
+-- Identify Critical Inventory Products
+--
+-- Business Purpose:
+-- Identify products with an inventory coverage ratio
+-- below 0.50. This helps procurement and warehouse teams
+-- identify critically understocked products and prioritize
+-- urgent replenishment activities.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+WHERE (current_stock * unit_cost) / (reorder_point * unit_cost) < .50
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 56
+-- Identify High-Risk Inventory Products
+--
+-- Business Purpose:
+-- Identify products with an inventory coverage ratio
+-- between 0.50 and below 0.75. This helps inventory
+-- and procurement teams identify products with high
+-- inventory risk and prioritize them for monitoring
+-- and potential replenishment.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+WHERE (current_stock * unit_cost) / (reorder_point * unit_cost) >= .50 
+	AND (current_stock * unit_cost) / (reorder_point * unit_cost) < .75
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 57
+-- Identify Moderate-Risk Inventory Products
+--
+-- Business Purpose:
+-- Identify products with an inventory coverage ratio
+-- between 0.75 and below 1.00. This helps inventory
+-- and procurement teams identify products with moderate
+-- inventory risk and prioritize them for monitoring before
+-- they reach higher-risk inventory levels.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+WHERE (current_stock * unit_cost) / (reorder_point * unit_cost) >= .75 
+	AND (current_stock * unit_cost) / (reorder_point * unit_cost) < 1.00
+ORDER BY inventory_coverage_ratio ASC;
+
+--------------------------------------------------------
+-- Query 58
+-- Identify Adequate Inventory Products
+--
+-- Business Purpose:
+-- Identify products with an inventory coverage ratio
+-- of 1.00 or higher. This helps inventory and procurement
+-- teams identify products with sufficient inventory coverage
+-- relative to the defined reorder-point level and distinguish
+-- them from products requiring closer inventory monitoring.
+--------------------------------------------------------
+
+SELECT 
+	product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    safety_stock,
+	unit_cost,
+	(current_stock * unit_cost) / (reorder_point * unit_cost) AS inventory_coverage_ratio
+FROM vw_inventory_summary
+WHERE (current_stock * unit_cost) / (reorder_point * unit_cost) >= 1.00
+ORDER BY inventory_coverage_ratio DESC;
+
+--------------------------------------------------------
+-- Query 59
+-- Calculate Inventory Value by Coverage Risk
+--
+-- Business Purpose:
+-- Calculate the total inventory value associated with
+-- each inventory coverage risk category. This helps
+-- supply chain, inventory, and procurement teams understand
+-- the financial exposure across critical, high-risk,
+-- moderate-risk, and adequate inventory positions.
+--------------------------------------------------------
+
+SELECT
+    CASE
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) < 0.50
+            THEN 'Critical'
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >= 0.50
+             AND (current_stock * unit_cost) / (reorder_point * unit_cost) < 0.75
+            THEN 'High Risk'
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >= 0.75
+             AND (current_stock * unit_cost) / (reorder_point * unit_cost) < 1.00
+            THEN 'Moderate Risk'
+        ELSE 'Adequate'
+    END AS inventory_coverage_risk,
+    SUM(inventory_value) AS total_inventory_value
+FROM vw_inventory_summary
+GROUP BY
+    CASE
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) < 0.50
+            THEN 'Critical'
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >= 0.50
+             AND (current_stock * unit_cost) / (reorder_point * unit_cost) < 0.75
+            THEN 'High Risk'
+        WHEN (current_stock * unit_cost) / (reorder_point * unit_cost) >= 0.75
+             AND (current_stock * unit_cost) / (reorder_point * unit_cost) < 1.00
+            THEN 'Moderate Risk'
+        ELSE 'Adequate'
+    END
+ORDER BY total_inventory_value DESC;
