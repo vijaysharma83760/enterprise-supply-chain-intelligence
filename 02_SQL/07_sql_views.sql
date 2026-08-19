@@ -709,3 +709,108 @@ GROUP BY
         ELSE 'Adequate'
     END
 ORDER BY total_inventory_value DESC;
+
+--------------------------------------------------------
+-- Query 60
+-- Suppliers with At Least One High-Value Purchase Order
+--
+-- Business Purpose:
+-- Identify suppliers who have at least one purchase order
+-- with a total cost of ₹200,000 or more. This helps
+-- procurement teams identify suppliers involved in
+-- financially significant purchase orders.
+--
+-- SQL Concepts:
+-- EXISTS
+-- Correlated Subquery
+-- Supplier-Purchase Order Relationship
+--------------------------------------------------------
+
+SELECT 
+	s.supplier_id,
+	s.supplier_name
+FROM suppliers s
+WHERE EXISTS (
+	SELECT 1 FROM purchase_orders po
+	WHERE s.supplier_id = po.supplier_id
+	AND po.total_cost >= 200000
+)
+
+--------------------------------------------------------
+-- Query 61
+-- Suppliers with No High-Value Purchase Orders
+--
+-- Business Purpose:
+-- Identify suppliers who do not have any purchase order
+-- with a total cost of ₹200,000 or more. This helps
+-- procurement teams identify suppliers that have not
+-- contributed to high-value procurement transactions.
+--
+-- SQL Concepts:
+-- NOT EXISTS
+-- Correlated Subquery
+-- Supplier-Purchase Order Relationship
+--------------------------------------------------------
+
+SELECT 
+	s.supplier_id,
+	s.supplier_name
+FROM suppliers s
+WHERE NOT EXISTS (
+	SELECT 1 FROM purchase_orders po
+	WHERE s.supplier_id = po.supplier_id
+	AND po.total_cost >= 200000
+)
+
+--------------------------------------------------------
+-- Query 62
+-- Supplier Order Status Summary
+--
+-- Business Purpose:
+-- Summarize supplier purchase orders by total order
+-- volume, high-value orders, pending orders, and
+-- completed orders. This helps procurement teams
+-- evaluate supplier order activity and financial exposure.
+--
+-- SQL Concepts:
+-- Conditional Aggregation
+-- SUM(CASE WHEN ...)
+-- COUNT()
+-- JOIN
+-- GROUP BY
+--------------------------------------------------------
+
+SELECT
+    s.supplier_id,
+    s.supplier_name,
+    COUNT(po.purchase_order_id) AS total_orders,
+	
+    SUM(
+        CASE
+            WHEN po.total_cost >= 200000 THEN 1
+            ELSE 0
+        END
+    ) AS high_value_orders,
+	
+    SUM(
+        CASE
+            WHEN po.status = 'Pending' THEN 1
+            ELSE 0
+        END
+    ) AS pending_orders,
+
+    SUM(
+        CASE
+            WHEN po.status = 'Completed' THEN 1
+            ELSE 0
+        END
+    ) AS completed_orders
+
+FROM suppliers s
+JOIN purchase_orders po
+    ON s.supplier_id = po.supplier_id
+GROUP BY
+    s.supplier_id,
+    s.supplier_name
+ORDER BY
+    total_orders DESC;
