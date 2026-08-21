@@ -814,3 +814,595 @@ GROUP BY
     s.supplier_name
 ORDER BY
     total_orders DESC;
+
+--------------------------------------------------------
+-- Query 63
+-- Inventory Risk KPI Dashboard
+--
+-- Business Purpose:
+-- Create a consolidated inventory risk summary showing
+-- the number of products in critical, high-risk,
+-- moderate-risk, and adequate inventory positions.
+-- This helps supply chain teams quickly assess overall
+-- inventory exposure.
+--
+-- SQL Concepts:
+-- Conditional Aggregation
+-- SUM(CASE WHEN ...)
+-- NULLIF()
+--------------------------------------------------------
+
+SELECT
+    COUNT(*) AS total_products,
+
+    SUM(
+        CASE
+            WHEN current_stock::numeric / NULLIF(reorder_point, 0) < 0.50
+            THEN 1
+            ELSE 0
+        END
+    ) AS critical_products,
+
+    SUM(
+        CASE
+            WHEN current_stock::numeric / NULLIF(reorder_point, 0) >= 0.50
+             AND current_stock::numeric / NULLIF(reorder_point, 0) < 0.75
+            THEN 1
+            ELSE 0
+        END
+    ) AS high_risk_products,
+
+    SUM(
+        CASE
+            WHEN current_stock::numeric / NULLIF(reorder_point, 0) >= 0.75
+             AND current_stock::numeric / NULLIF(reorder_point, 0) < 1.00
+            THEN 1
+            ELSE 0
+        END
+    ) AS moderate_risk_products,
+
+    SUM(
+        CASE
+            WHEN current_stock::numeric / NULLIF(reorder_point, 0) >= 1.00
+            THEN 1
+            ELSE 0
+        END
+    ) AS adequate_products
+
+FROM vw_inventory_summary;
+
+--------------------------------------------------------
+-- Query 64
+-- Supplier Procurement Spend Contribution
+--
+-- Business Purpose:
+-- Calculate each supplier's contribution to total
+-- procurement spend and identify whether company
+-- procurement spending is concentrated among a small
+-- number of suppliers.
+--
+-- SQL Concepts:
+-- CTE
+-- Aggregation
+-- Window Functions
+-- Percentage Contribution
+-- Running Total
+--------------------------------------------------------
+
+WITH supplier_spend AS (
+    SELECT
+        s.supplier_id,
+        s.supplier_name,
+        SUM(po.total_cost) AS total_procurement_spend
+    FROM suppliers s
+    JOIN purchase_orders po
+        ON s.supplier_id = po.supplier_id
+    GROUP BY
+        s.supplier_id,
+        s.supplier_name
+)
+
+SELECT
+    supplier_id,
+    supplier_name,
+    total_procurement_spend,
+
+    ROUND(
+        total_procurement_spend * 100.0
+        / SUM(total_procurement_spend) OVER (),
+        2
+    ) AS spend_percentage,
+
+    ROUND(
+        SUM(total_procurement_spend) OVER (
+            ORDER BY total_procurement_spend DESC
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) * 100.0
+        / SUM(total_procurement_spend) OVER (),
+        2
+    ) AS cumulative_spend_percentage
+
+FROM supplier_spend
+ORDER BY total_procurement_spend DESC;
+
+--------------------------------------------------------
+-- Query 65
+-- Monthly Procurement Spend Growth
+--
+-- Business Purpose:
+-- Analyze month-over-month changes in procurement
+-- spending to identify increasing or decreasing
+-- procurement trends.
+--
+-- SQL Concepts:
+-- DATE_TRUNC()
+-- CTE
+-- LAG()
+-- Window Functions
+-- Percentage Change
+--------------------------------------------------------
+
+WITH monthly_spend AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS procurement_month,
+        SUM(total_cost) AS current_month_spend
+    FROM purchase_orders
+    GROUP BY DATE_TRUNC('month', order_date)
+),
+
+spend_comparison AS (
+    SELECT
+        procurement_month,
+        current_month_spend,
+        LAG(current_month_spend) OVER (
+            ORDER BY procurement_month
+        ) AS previous_month_spend
+    FROM monthly_spend
+)
+
+SELECT
+    procurement_month,
+    current_month_spend,
+    previous_month_spend,
+
+    current_month_spend - previous_month_spend
+        AS absolute_change,
+
+    ROUND(
+        (
+            current_month_spend - previous_month_spend
+        ) * 100.0
+        / NULLIF(previous_month_spend, 0),
+        2
+    ) AS percentage_change
+
+FROM spend_comparison
+ORDER BY procurement_month;
+
+--------------------------------------------------------
+-- Query 66
+-- Top 3 Products by Procurement Spend Within Each Category
+--
+-- Business Purpose:
+-- Identify the three products with the highest
+-- procurement spend within each product category.
+-- This helps identify financially significant products
+-- across different categories.
+--
+-- SQL Concepts:
+-- CTE
+-- ROW_NUMBER()
+-- PARTITION BY
+-- Top-N Per Group
+--------------------------------------------------------
+
+WITH product_spend AS (
+    SELECT
+        p.product_id,
+        p.product_name,
+        p.category,
+        SUM(po.total_cost) AS total_procurement_spend
+    FROM products p
+    JOIN purchase_orders po
+        ON p.product_id = po.product_id
+    GROUP BY
+        p.product_id,
+        p.product_name,
+        p.category
+),
+
+ranked_products AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY category
+            ORDER BY total_procurement_spend DESC
+        ) AS product_rank
+    FROM product_spend
+)
+
+SELECT
+    product_id,
+    product_name,
+    category,
+    total_procurement_spend,
+    product_rank
+
+FROM ranked_products
+WHERE product_rank <= 3
+
+ORDER BY
+    category,
+    product_rank;
+
+--------------------------------------------------------
+-- Query 67
+-- Latest Purchase Order for Each Supplier
+--
+-- Business Purpose:
+-- Identify the most recent purchase order for every
+-- supplier. This helps procurement teams monitor the
+-- latest supplier activity.
+--
+-- SQL Concepts:
+-- ROW_NUMBER()
+-- PARTITION BY
+-- Latest Record Per Entity
+-- CTE
+--------------------------------------------------------
+
+WITH ranked_purchase_orders AS (
+    SELECT
+        po.purchase_order_id,
+        po.supplier_id,
+        po.product_id,
+        po.order_date,
+        po.total_cost,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY po.supplier_id
+            ORDER BY
+                po.order_date DESC,
+                po.purchase_order_id DESC
+        ) AS rn
+
+    FROM purchase_orders po
+)
+
+SELECT
+    s.supplier_id,
+    s.supplier_name,
+    rpo.purchase_order_id,
+    rpo.product_id,
+    rpo.order_date,
+    rpo.total_cost
+
+FROM suppliers s
+JOIN ranked_purchase_orders rpo
+    ON s.supplier_id = rpo.supplier_id
+
+WHERE rpo.rn = 1
+
+ORDER BY s.supplier_id;
+
+--------------------------------------------------------
+-- Query 68
+-- Purchase Order Data Quality Check
+--
+-- Business Purpose:
+-- Identify potential data quality issues in purchase
+-- order records before they are used for analytics
+-- or business decision-making.
+--
+-- SQL Concepts:
+-- CASE
+-- IS NULL
+-- COALESCE()
+-- NULLIF()
+-- Data Quality Validation
+--------------------------------------------------------
+
+SELECT
+    purchase_order_id,
+    supplier_id,
+    product_id,
+    order_date,
+    quantity,
+    unit_cost,
+    total_cost,
+
+    CASE
+        WHEN supplier_id IS NULL
+            THEN 'Missing Supplier'
+
+        WHEN product_id IS NULL
+            THEN 'Missing Product'
+
+        WHEN quantity IS NULL OR quantity <= 0
+            THEN 'Invalid Quantity'
+
+        WHEN unit_cost IS NULL OR unit_cost <= 0
+            THEN 'Invalid Unit Cost'
+
+        WHEN total_cost IS NULL OR total_cost < 0
+            THEN 'Invalid Total Cost'
+
+        ELSE 'Valid Record'
+    END AS data_quality_status
+
+FROM purchase_orders
+
+ORDER BY purchase_order_id;
+
+--------------------------------------------------------
+-- Query 69
+-- Identify Potential Duplicate Purchase Orders
+--
+-- Business Purpose:
+-- Identify purchase order records with identical
+-- supplier, product, order date, quantity, and unit
+-- cost combinations that may represent duplicate
+-- transactions.
+--
+-- SQL Concepts:
+-- GROUP BY
+-- HAVING
+-- COUNT()
+-- Duplicate Detection
+--------------------------------------------------------
+
+SELECT
+    supplier_id,
+    product_id,
+    order_date,
+    quantity,
+    unit_cost,
+    COUNT(*) AS duplicate_count
+
+FROM purchase_orders
+
+GROUP BY
+    supplier_id,
+    product_id,
+    order_date,
+    quantity,
+    unit_cost
+
+HAVING COUNT(*) > 1
+
+ORDER BY duplicate_count DESC;
+
+--------------------------------------------------------
+-- Query 70
+-- Procurement Executive KPI Summary
+--
+-- Business Purpose:
+-- Create a consolidated procurement KPI summary for
+-- management reporting. The query provides a single
+-- view of procurement spend, purchase order volume,
+-- average order value, high-value orders, and supplier
+-- activity.
+--
+-- SQL Concepts:
+-- Aggregation
+-- Conditional Aggregation
+-- CASE
+-- COUNT()
+-- SUM()
+-- AVG()
+--------------------------------------------------------
+
+SELECT
+    SUM(total_cost) AS total_procurement_spend,
+
+    COUNT(purchase_order_id) AS total_purchase_orders,
+
+    ROUND(
+        AVG(total_cost),
+        2
+    ) AS average_purchase_order_value,
+
+    SUM(
+        CASE
+            WHEN total_cost >= 200000 THEN 1
+            ELSE 0
+        END
+    ) AS high_value_orders,
+
+    SUM(
+        CASE
+            WHEN status = 'Pending' THEN 1
+            ELSE 0
+        END
+    ) AS pending_orders,
+
+    SUM(
+        CASE
+            WHEN status = 'Completed' THEN 1
+            ELSE 0
+        END
+    ) AS completed_orders,
+
+    COUNT(DISTINCT supplier_id) AS active_suppliers
+
+FROM purchase_orders;
+
+--------------------------------------------------------
+-- Query 71
+-- High-Spend Suppliers with High Order Volume
+--
+-- Business Purpose:
+-- Identify suppliers that have both high procurement
+-- spend and high purchase order volume. These suppliers
+-- represent financially and operationally significant
+-- procurement dependencies.
+--
+-- SQL Concepts:
+-- CTE
+-- Aggregation
+-- AVG()
+-- Multi-Criteria Filtering
+--------------------------------------------------------
+
+WITH supplier_metrics AS (
+    SELECT
+        s.supplier_id,
+        s.supplier_name,
+        SUM(po.total_cost) AS total_procurement_spend,
+        COUNT(po.purchase_order_id) AS total_orders
+
+    FROM suppliers s
+    JOIN purchase_orders po
+        ON s.supplier_id = po.supplier_id
+
+    GROUP BY
+        s.supplier_id,
+        s.supplier_name
+)
+
+SELECT
+    supplier_id,
+    supplier_name,
+    total_procurement_spend,
+    total_orders
+
+FROM supplier_metrics
+
+WHERE total_procurement_spend > (
+    SELECT AVG(total_procurement_spend)
+    FROM supplier_metrics
+)
+
+AND total_orders > (
+    SELECT AVG(total_orders)
+    FROM supplier_metrics
+)
+
+ORDER BY total_procurement_spend DESC;
+
+--------------------------------------------------------
+-- Query 72
+-- Financially Significant Inventory Risk
+--
+-- Business Purpose:
+-- Identify products that have both low inventory
+-- coverage and significant inventory value. This helps
+-- supply chain teams prioritize financially important
+-- inventory risks instead of treating all stock risks
+-- equally.
+--
+-- SQL Concepts:
+-- CTE
+-- CASE
+-- Inventory Coverage Ratio
+-- Multi-Criteria Filtering
+-- NULLIF()
+--------------------------------------------------------
+
+WITH inventory_risk AS (
+    SELECT
+        product_id,
+        product_name,
+        category,
+        current_stock,
+        reorder_point,
+        inventory_value,
+
+        current_stock::numeric
+        / NULLIF(reorder_point, 0)
+        AS inventory_coverage_ratio
+
+    FROM vw_inventory_summary
+)
+
+SELECT
+    product_id,
+    product_name,
+    category,
+    current_stock,
+    reorder_point,
+    inventory_value,
+
+    ROUND(
+        inventory_coverage_ratio,
+        2
+    ) AS inventory_coverage_ratio,
+
+    CASE
+        WHEN inventory_coverage_ratio < 0.50
+            THEN 'Critical'
+
+        WHEN inventory_coverage_ratio < 0.75
+            THEN 'High Risk'
+
+        ELSE 'Moderate Risk'
+    END AS risk_level
+
+FROM inventory_risk
+
+WHERE inventory_coverage_ratio < 0.75
+  AND inventory_value > (
+      SELECT AVG(inventory_value)
+      FROM vw_inventory_summary
+  )
+
+ORDER BY inventory_value DESC;
+
+--------------------------------------------------------
+-- Query 73
+-- Top 3 Products by Procurement Spend Per Category
+--
+-- Business Purpose:
+-- Solve the classic SQL interview problem of finding
+-- the top three products within each category based
+-- on procurement spend.
+--
+-- SQL Concepts:
+-- DENSE_RANK()
+-- PARTITION BY
+-- CTE
+-- Top-N Per Group
+--------------------------------------------------------
+
+WITH product_procurement AS (
+    SELECT
+        p.product_id,
+        p.product_name,
+        p.category,
+        SUM(po.total_cost) AS total_procurement_spend
+
+    FROM products p
+    JOIN purchase_orders po
+        ON p.product_id = po.product_id
+
+    GROUP BY
+        p.product_id,
+        p.product_name,
+        p.category
+),
+
+ranked_products AS (
+    SELECT
+        *,
+        DENSE_RANK() OVER (
+            PARTITION BY category
+            ORDER BY total_procurement_spend DESC
+        ) AS spend_rank
+
+    FROM product_procurement
+)
+
+SELECT
+    product_id,
+    product_name,
+    category,
+    total_procurement_spend,
+    spend_rank
+
+FROM ranked_products
+
+WHERE spend_rank <= 3
+
+ORDER BY
+    category,
+    spend_rank;
