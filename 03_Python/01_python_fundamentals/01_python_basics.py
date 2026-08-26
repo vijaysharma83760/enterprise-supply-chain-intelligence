@@ -83,5 +83,56 @@ print(products)
 # ------------------------------------------------------------
 
 products[5] = "Industrial Control Valve"
+products[2] = "Heavy Duty Bearing"
 
+print("\nAfter Updating Products:")
 print(products)
+
+
+# ------------------------------------------------------------
+# 7. Removing a Product
+# ------------------------------------------------------------
+
+products.remove("Steel Sheet")
+
+print("\nAfter Removing a Product:")
+print(products)
+
+
+# ------------------------------------------------------------
+# 8. Counting Products
+# ------------------------------------------------------------
+
+print("\nTotal Products:")
+print(len(products))
+
+
+# ------------------------------------------------------------
+# 9. Checking Product Availability
+# ------------------------------------------------------------
+
+print("\nProduct Availability:")
+print("Industrial Motor" in products)
+print("Electric Generator" in products)
+
+
+# ------------------------------------------------------------
+# 10. Adding Multiple Products
+# ------------------------------------------------------------
+
+products.extend([
+    "Gearbox",
+    "Conveyor Belt",
+    "Pressure Sensor"
+])
+
+print("\nAfter Adding Multiple Products:")
+print(products)
+
+
+# ------------------------------------------------------------
+# 11. List Slicing
+# ------------------------------------------------------------
+
+print("\nFirst Three Products:")
+print(products[0:3])
