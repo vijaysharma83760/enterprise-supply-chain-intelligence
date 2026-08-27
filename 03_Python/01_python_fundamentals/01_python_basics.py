@@ -136,3 +136,108 @@ print(products)
 
 print("\nFirst Three Products:")
 print(products[0:3])
+
+# ------------------------------------------------------------
+# 12. Supplier Status Tuple
+# ------------------------------------------------------------
+
+supplier_status = (
+    "Active", 
+    "Inactive", 
+    "Blocked"
+)
+
+print("Supplier Status: ")
+print(supplier_status)
+
+print(supplier_status[0])
+print(supplier_status[2])
+
+# ------------------------------------------------------------
+# 13. Supply Chain Product Dictionary
+# ------------------------------------------------------------
+
+product = {
+    "product_id": "P1001",
+    "product_name": "Industrial Motor",
+    "category":  "Machinery",
+    "current_stock": 75,
+    "reorder_point": 100,
+    "unit_cost": 2500.50
+}
+
+print(product)
+
+
+# ------------------------------------------------------------
+# 13.2 Accessing Dictionary Values
+# ------------------------------------------------------------
+
+print("Product Name: ", product["product_name"])
+print("Current Stock: ", product["current_stock"])
+print("Unit Cost: ", product["unit_cost"])
+
+# ------------------------------------------------------------
+# 13.3 Adding a New Dictionary Key
+# ------------------------------------------------------------
+
+product["supplier_name"] = "ABC Engineering"
+
+print(product)
+
+# ------------------------------------------------------------
+# 13.4 Updating a Dictionary Value
+# ------------------------------------------------------------
+
+product["current_stock"] = 125
+print("Updated Current Stock: ", product["current_stock"])
+
+# ------------------------------------------------------------
+# 13.5 Removing a Dictionary Key
+# ------------------------------------------------------------
+
+del product["supplier_name"]
+print(product)
+
+# ------------------------------------------------------------
+# 13.6 Checking Dictionary Keys
+# ------------------------------------------------------------
+
+print("supplier_name" in product)
+print("product_id" in product)
+
+# ------------------------------------------------------------
+# 13.7 Accessing Dictionary Keys and Values
+# ------------------------------------------------------------
+
+print(product.keys())
+print(product.values())
+
+# ------------------------------------------------------------
+# 13.8 Calculating Inventory Value
+# ------------------------------------------------------------
+
+inventory_value = product["current_stock"] * product["unit_cost"]
+
+print("Inventory Value: ", inventory_value)
+
+# ------------------------------------------------------------
+# 13.9 Reorder Decision
+# ------------------------------------------------------------
+
+if product["current_stock"] < product["reorder_point"]:
+    print("Reorder Required")
+else:
+    print("No Reorder Required")
+
+# ------------------------------------------------------------
+# 13.10 Supply Chain Product Summary
+# ------------------------------------------------------------
+
+print("Product Name:", product["product_name"])
+print("Product ID:", product["product_id"])
+print("Category:", product["category"])
+print("Current Stock:", product["current_stock"])
+print("Reorder Point:", product["reorder_point"])
+print("Unit Cost:", product["unit_cost"])
+print("Inventory Value:", inventory_value)
