@@ -241,3 +241,134 @@ print("Current Stock:", product["current_stock"])
 print("Reorder Point:", product["reorder_point"])
 print("Unit Cost:", product["unit_cost"])
 print("Inventory Value:", inventory_value)
+
+# ============================================================
+# 14. Conditional Statements
+# ============================================================
+#
+# Business Objective
+# ------------------
+# Use business rules to make decisions from supply-chain data.
+#
+# Supply Chain Use Cases
+# ----------------------
+# 1. Inventory reorder decisions
+# 2. Stock risk classification
+# 3. Shipment status evaluation
+# 4. Supplier performance classification
+#
+# Concepts Covered
+# ----------------
+# 1. if
+# 2. else
+# 3. Comparison operators
+# 4. Business-rule evaluation
+#
+# ============================================================
+
+if product["current_stock"] < product["reorder_point"]:
+    print("Reorder Required")
+elif product["current_stock"] == product["reorder_point"]:
+    print("Reorder Required")
+else:
+    print("No Reorder Required")
+
+# ------------------------------------------------------------
+# 14.2 Stock Risk Classification
+# ------------------------------------------------------------
+
+if product["current_stock"] < 50:
+    print("Critical Stock")
+
+elif product["current_stock"] < product["reorder_point"]:
+    print("Low Stock")
+
+else:
+    print("Healthy Stock")
+
+# ------------------------------------------------------------
+# 14.3 Inventory Value Classification
+# ------------------------------------------------------------
+
+if inventory_value < 100000:
+    print("Low Value Inventory")
+
+elif inventory_value < 500000:
+    print("Medium Value Inventory")
+
+else:
+    print("High Value Inventory")
+
+# ------------------------------------------------------------
+# 14.4 Supplier Performance Classification
+# ------------------------------------------------------------
+
+on_time_delivery_rate = 92
+
+if on_time_delivery_rate >= 95:
+    print("Excellent Supplier")
+
+elif on_time_delivery_rate >= 85:
+    print("Good Supplier")
+
+else:
+    print("Needs Improvement")
+
+# ------------------------------------------------------------
+# 14.5 Shipment Delay Classification
+# ------------------------------------------------------------
+
+transit_days = 7
+
+expected_transit_days = 11
+
+if transit_days > expected_transit_days:
+    print("Delayed Shipment")
+elif transit_days == expected_transit_days:
+    print("On-Time Shipment")
+else:
+    print("Early Shipment")
+
+# ------------------------------------------------------------
+# 14.6 Order Priority Classification
+# ------------------------------------------------------------
+
+order_value = float(input("Enter order value: "))
+
+if order_value >= 100000:
+    print("High Priority")
+
+elif order_value >= 50000:
+    print("Medium Priority")
+
+else:
+    print("Low Priority")
+
+# ------------------------------------------------------------
+# 14.7 Combined Inventory Risk Decision
+# ------------------------------------------------------------
+
+if product["current_stock"] < product["reorder_point"] and "inventory_value" < 200000:
+    print("Critical Reorder")
+
+else:
+    print("Normal Inventory")
+
+# ------------------------------------------------------------
+# 14.8 Shipment Management Review
+# ------------------------------------------------------------
+
+if transit_days > 10 or order_value >= 100000:
+    print("Management Review")
+else:
+    print("No Management Review")
+
+# ------------------------------------------------------------
+# 14.9 Integrated Supply Chain Risk Decision
+# ------------------------------------------------------------
+
+if product["current_stock"] < product["reorder_point"] or transit_days > expected_transit_days:
+    print("High Risk")
+else:
+    print("Low Risk")
+
