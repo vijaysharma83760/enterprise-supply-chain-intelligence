@@ -1,1 +1,254 @@
-# Phase 2
+# Phase 2 — PostgreSQL / SQL
+
+This folder contains the PostgreSQL database design and SQL-based business analysis developed as the second phase of the **Enterprise Supply Chain Intelligence** project.
+
+The objective of this phase was to transform the supply chain dataset into a structured relational database and use SQL to analyze operational performance across inventory, procurement, sales, suppliers, and logistics.
+
+## Current Status
+
+**Completed**
+
+## Objectives
+
+The objectives of the PostgreSQL / SQL phase were to:
+
+* Build a structured relational supply chain database.
+* Store and organize operational supply chain data.
+* Establish relationships between business entities.
+* Apply primary keys and foreign keys.
+* Validate and analyze operational data.
+* Develop reusable SQL views and analytical queries.
+* Calculate supply chain KPIs.
+* Analyze inventory, procurement, sales, suppliers, and logistics.
+* Develop business rules for inventory and supply chain risk.
+* Convert raw operational data into actionable business insights.
+
+## Database
+
+The project uses **PostgreSQL** as the relational database management system.
+
+The database contains interconnected supply chain entities covering areas such as:
+
+* Products
+* Suppliers
+* Inventory
+* Purchase Orders
+* Sales Orders
+* Shipments
+
+Relationships between the entities are established using primary keys and foreign keys to maintain data integrity and support cross-functional analysis.
+
+## SQL Analysis
+
+The SQL analysis is organized around practical supply chain business problems.
+
+### Inventory Analysis
+
+The analysis covers:
+
+* Current stock
+* Reorder points
+* Safety stock
+* Inventory value
+* Inventory coverage
+* Reorder requirements
+* Low-stock products
+* Inventory risk
+
+Example business question:
+
+> Which products require replenishment based on their current inventory position?
+
+### Procurement Analysis
+
+The analysis covers:
+
+* Purchase orders
+* Purchase costs
+* Supplier activity
+* Supplier lead time
+* Procurement performance
+* Purchasing patterns
+
+Example business question:
+
+> Which suppliers and procurement activities have the greatest operational impact?
+
+### Sales Analysis
+
+The analysis covers:
+
+* Sales orders
+* Sales revenue
+* Product performance
+* Order values
+* Average order value
+
+Example business question:
+
+> Which products and orders contribute most to sales performance?
+
+### Supplier Analysis
+
+The analysis covers:
+
+* Supplier performance
+* Supplier lead time
+* Supplier activity
+* Supplier-related operational risk
+
+Example business question:
+
+> Which suppliers require closer monitoring because of lead-time or performance concerns?
+
+### Logistics Analysis
+
+The analysis covers:
+
+* Shipments
+* Transit days
+* Shipping costs
+* Delivery-related performance
+
+Example business question:
+
+> Which shipment activities indicate potential logistics delays or cost concerns?
+
+## Advanced SQL Concepts
+
+The project applies SQL beyond basic data retrieval.
+
+Concepts used across the analysis include:
+
+* SELECT
+* WHERE
+* ORDER BY
+* GROUP BY
+* Aggregate Functions
+* CASE Statements
+* JOINs
+* Subqueries
+* Common Table Expressions (CTEs)
+* Window Functions
+* Views
+* Indexes
+
+These techniques are used to translate operational supply chain requirements into analytical business logic.
+
+## Supply Chain Business Logic
+
+A major objective of this phase is to use SQL for decision-oriented analysis rather than only reporting.
+
+For example:
+
+### Reorder Decision
+
+**Current Stock < Reorder Point**
+
+→ Reorder Required
+
+### Inventory Coverage
+
+Current inventory is compared with the relevant inventory requirement to identify products approaching critical levels.
+
+### Supply Chain Risk
+
+Inventory conditions can be combined with operational factors such as:
+
+* Low stock
+* Reorder requirements
+* Supplier lead time
+* Shipment/transit conditions
+
+to identify products or activities requiring management attention.
+
+## Analytical Views
+
+Reusable SQL views are used to simplify recurring analysis and provide structured datasets for downstream analytics.
+
+These views can support:
+
+* Inventory reporting
+* KPI calculations
+* Supply chain analysis
+* Power BI data preparation
+* Python analytics
+
+## Indexing
+
+Indexes are included where appropriate to improve query performance and demonstrate database optimization practices.
+
+The purpose is to support efficient analytical queries as the dataset and number of business questions increase.
+
+## Business Questions Addressed
+
+The SQL phase helps answer questions such as:
+
+1. Which products require replenishment?
+2. Which products have critically low inventory?
+3. What is the value of current inventory?
+4. Which products have the lowest inventory coverage?
+5. What is the total procurement cost?
+6. Which suppliers have longer lead times?
+7. What is the sales revenue generated by products?
+8. What is the average order value?
+9. What is the total shipping cost?
+10. What are the average shipment transit times?
+11. Which supply-chain activities require management attention?
+12. Which inventory conditions represent potential supply risk?
+
+## Role in the End-to-End Project
+
+PostgreSQL / SQL is the **core structured-data and business-analysis layer** of the project.
+
+The overall project follows:
+
+**Supply Chain Data**
+
+↓
+
+**Phase 1 — Excel Analysis**
+
+↓
+
+**Phase 2 — PostgreSQL / SQL**
+
+↓
+
+**Phase 3 — Python Analytics & Forecasting**
+
+↓
+
+**Forecast → Inventory → Replenishment Decision**
+
+↓
+
+**Supply Chain Risk Analysis**
+
+↓
+
+**Power BI Executive Decision Dashboard**
+
+↓
+
+**Business Recommendations**
+
+The SQL phase therefore acts as the bridge between the initial Excel analysis and the more advanced Python and Power BI decision-support layers.
+
+## Project Outcome
+
+The PostgreSQL / SQL phase successfully converts the supply chain dataset into a structured relational database and applies SQL-based business analysis across major supply chain functions.
+
+The phase establishes the foundation for:
+
+* Advanced Python analytics
+* Demand forecasting
+* Inventory decision support
+* Supply chain risk analysis
+* Power BI dashboards
+
+## Next Phase
+
+**Phase 3 — Python Analytics & Automation**
+
+The next phase focuses on using Python and Pandas for supply chain data preparation, analysis, automation, demand forecasting, and forecast-driven inventory decision support.
