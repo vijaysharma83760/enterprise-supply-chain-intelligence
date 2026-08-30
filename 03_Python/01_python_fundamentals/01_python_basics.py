@@ -372,3 +372,115 @@ if product["current_stock"] < product["reorder_point"] or transit_days > expecte
 else:
     print("Low Risk")
 
+# ============================================================
+# 15. Python Loops
+# ============================================================
+#
+# Business Objective:
+# Automate repetitive operations across supply-chain data.
+#
+# Concepts Covered:
+# 1. for loops
+# 2. range()
+# 3. Iterating through lists
+# 4. Conditional logic inside loops
+# 5. while loops
+#
+# Supply Chain Applications:
+# - Product processing
+# - Inventory monitoring
+# - Risk identification
+# - Record-level analysis
+#
+# ============================================================
+
+# ------------------------------------------------------------
+# 15.1 Iterating Through Supply Chain Products
+# ------------------------------------------------------------
+
+for product in products:
+    print(product)
+
+# ------------------------------------------------------------
+# 15.2 Using range() for Repeated Operations
+# ------------------------------------------------------------
+
+for records in range(1,6):
+    print(records)
+
+# ------------------------------------------------------------
+# 15.3 Iterating Through Products Using List Indexes
+# ------------------------------------------------------------
+
+for index in range(len(products)):
+    print(products[index])
+
+# ------------------------------------------------------------
+# 15.4 Inventory Reorder Check Using a Loop
+# ------------------------------------------------------------
+
+inventory_levels = (75, 150, 40, 120, 30)
+reorder_point = 100
+
+for inventory in inventory_levels:
+
+    if inventory <= reorder_point:
+        print("Reorder Required")
+
+    else:
+        print("Stock Sufficient")
+
+# ------------------------------------------------------------
+# 15.5 Identifying Low-Stock Inventory Levels
+# ------------------------------------------------------------
+for inventory in inventory_levels:
+
+    if inventory <= reorder_point:
+        print(f"Reorder Required - Current Inventory: {inventory}")
+
+    else:
+        print(f"Stock Sufficient - Current Inventory: {inventory}")
+
+# ------------------------------------------------------------
+# 15.6 Using a while Loop for Inventory Monitoring
+# ------------------------------------------------------------
+
+count = 1
+
+while count <= 5:
+    print("Inventory Check", count)
+    count = count + 1
+
+# ------------------------------------------------------------
+# 15.7 Practical Inventory Monitoring Loop
+# ------------------------------------------------------------
+
+count = 1
+
+while count <= 5:
+    print("Inventory Check", count, "- Monitoring stock levels")
+    count = count + 1
+
+# ------------------------------------------------------------
+# 15.8 Integrated Product Inventory Risk Check
+# ------------------------------------------------------------
+
+inventory_levels = (75, 150, 40, 120, 30, 110, 65, 200)
+
+for index in range(len(products)):
+
+    if inventory_levels[index] <= reorder_point:
+        print(
+            f"{products[index]} - "
+            f"Reorder Required - "
+            f"Inventory: {inventory_levels[index]}"
+        )
+
+    else:
+        print(
+            f"{products[index]} - "
+            f"Stock Sufficient - "
+            f"Inventory: {inventory_levels[index]}"
+        )
+
+
