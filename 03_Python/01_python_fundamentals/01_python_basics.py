@@ -483,4 +483,266 @@ for index in range(len(products)):
             f"Inventory: {inventory_levels[index]}"
         )
 
+# ============================================================
+# 16. Python Functions
+# ============================================================
+#
+# Business Objective:
+# Create reusable functions for supply-chain analysis.
+#
+# Concepts Covered:
+# 1. Functions
+# 2. Parameters
+# 3. Arguments
+# 4. Return values
+# 5. Reusable business logic
+#
+# Supply Chain Applications:
+# - Inventory calculations
+# - Reorder decisions
+# - Stock risk classification
+# - Order priority
+#
+# ============================================================
+
+# ------------------------------------------------------------
+# 16.1 Basic Python Function
+# ------------------------------------------------------------
+
+def inventory_check():
+    print("Inventory monitoring started")
+
+inventory_check()
+
+# ------------------------------------------------------------
+# 16.2 Function with a Parameter
+# ------------------------------------------------------------
+
+def inventory_check(inventory):
+    print(f"current inventory: {inventory}")
+
+inventory = 75
+inventory_check(inventory)
+
+# ------------------------------------------------------------
+# 16.3 Calling a Function with Different Arguments
+# ------------------------------------------------------------
+
+def inventory_check(inventory):
+    print(f"Current Inventory: {inventory}")
+
+inventory_check(75)
+inventory_check(150)
+inventory_check(40)
+
+# ------------------------------------------------------------
+# 16.4 Function with Multiple Parameters
+# ------------------------------------------------------------
+
+def calculate_current_value(current_stock, unit_cost):
+    print(f"current inventory value :{current_stock * unit_cost}")
+
+calculate_current_value(75, 500)
+
+# ------------------------------------------------------------
+# 16.5 Function with Default Parameters
+# ------------------------------------------------------------
+
+def calculate_current_value(current_stock, unit_cost = 500):
+    print(f"current inventory value :{current_stock * unit_cost}")
+
+calculate_current_value(75)
+calculate_current_value(75, 750)
+
+# ------------------------------------------------------------
+# 16.6 Function with Keyword Arguments
+# ------------------------------------------------------------ 
+
+def calculate_reorder_point(current_stock, unit_cost):
+    print(f"current reorder point: {current_stock * unit_cost}")
+
+calculate_reorder_point(current_stock = 40, unit_cost = 600)
+
+# ------------------------------------------------------------
+# 16.7 Positional vs Keyword Arguments
+# ------------------------------------------------------------
+
+def calculate_current_value(current_stock, unit_cost):
+    print(f"current inventory value :{current_stock * unit_cost}")
+
+calculate_current_value(75, 500)
+
+calculate_current_value(current_stock = 75, unit_cost = 500)
+
+# ------------------------------------------------------------
+# 16.8 Function with *args
+# ------------------------------------------------------------
+
+def total_inventory(*stock):
+    print(f"Total inventory: {sum(stock)}")
+
+total_inventory(75, 100, 50)
+total_inventory(200, 150, 75, 125)
+total_inventory(500, 300)
+
+# ------------------------------------------------------------
+# 16.9 Function with **kwargs
+# ------------------------------------------------------------
+
+def product_details(**details):
+    print(details)
+
+product_details(
+    product="Laptop",
+    category="Electronics",
+    supplier="DELL"
+)
+
+# ------------------------------------------------------------
+# 16.10 Return Statement
+# ------------------------------------------------------------
+
+def calculate_current_value(current_stock, unit_cost):
+    return current_stock * unit_cost
+
+inventory_value = calculate_current_value(75, 500)
+print(inventory_value)
+
+# ------------------------------------------------------------
+# 16.11 Multiple Return Values
+# ------------------------------------------------------------
+
+def inventory_analysis(current_stock, unit_cost):
+    inventory_value = current_stock * unit_cost
+    average_value = inventory_value / current_stock
+    return inventory_value, average_value
+
+inventory_value, average_value = inventory_analysis(
+    current_stock = 100,
+    unit_cost = 500
+)
+
+print("Inventory Value:", inventory_value)
+print("Average Value:", average_value)
+
+# ------------------------------------------------------------
+# 16.12 Combining *args and **kwargs
+# ------------------------------------------------------------
+
+def inventory_summary(*stocks, **details):
+    print(f"Total inventory: {sum(stocks)}")
+    print(details)
+
+inventory_summary(
+    100, 150, 200,
+    product="Laptop",
+    category="Electronics",
+    supplier="DELL"
+)
+
+# ------------------------------------------------------------
+# 16.13 Integrated Supply-Chain Business Function
+# ------------------------------------------------------------
+
+def inventory_analysis(current_stock, reorder_point, unit_cost):
+
+    if current_stock < reorder_point:
+        inventory_status = "Reorder Required"
+    else:
+        inventory_status = "Stock Sufficient"
+
+    inventory_value = current_stock * unit_cost
+
+    return inventory_status, inventory_value
+
+
+status, value = inventory_analysis(40, 50, 600)
+
+print(f"Inventory Status: {status}")
+print(f"Inventory Value: {value}")
+
+status, value = inventory_analysis(100, 50, 600)
+
+print(f"Inventory Status: {status}")
+print(f"Inventory Value: {value}")
+
+# ------------------------------------------------------------
+# 16.14 Function Mini Challenge
+# ------------------------------------------------------------
+
+def inventory_risk_analysis(current_stock, reorder_point, safety_stock, unit_cost):
+
+    if current_stock < reorder_point:
+        risk_status = "High Risk"
+    elif current_stock < safety_stock:
+        risk_status = "Medium Risk"
+    else:
+        risk_status = "Low Risk"
+
+    inventory_value = current_stock * unit_cost
+
+    return risk_status, inventory_value
+
+
+risk, value = inventory_risk_analysis(30, 50, 75, 500)
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
+
+risk, value = inventory_risk_analysis(60, 50, 75, 500)
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
+
+risk, value = inventory_risk_analysis(100, 50, 75, 500)
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
+
+# ------------------------------------------------------------
+# 16.15 Section 16 Revision & Final Function Challenge
+# ------------------------------------------------------------
+
+def supply_chain_analysis(current_stock, reorder_point, safety_stock, unit_cost):
+
+    inventory_value = current_stock * unit_cost
+
+    if current_stock < reorder_point:
+        risk_status = "High Risk"
+    elif current_stock < safety_stock:
+        risk_status = "Medium Risk"
+    else:
+        risk_status = "Low Risk"
+
+    return risk_status, inventory_value
+
+
+risk, value = supply_chain_analysis(
+    current_stock=30,
+    reorder_point=50,
+    safety_stock=75,
+    unit_cost=500
+)
+
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
+
+
+risk, value = supply_chain_analysis(
+    current_stock=60,
+    reorder_point=50,
+    safety_stock=75,
+    unit_cost=500
+)
+
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
+
+
+risk, value = supply_chain_analysis(
+    current_stock=100,
+    reorder_point=50,
+    safety_stock=75,
+    unit_cost=500
+)
+
+print(f"Risk Status: {risk}")
+print(f"Inventory Value: {value}")
 
